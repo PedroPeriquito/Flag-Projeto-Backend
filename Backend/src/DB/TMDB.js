@@ -8,9 +8,9 @@ function getTMDB() {
 		},
 	};
 
-	const data = fetch(url, options)
-		.then(res => res.json(data))
-		.then(json => console.log(json))
+		fetch(url, options)
+		.then(res => res.json())
+		.then(json => console.log(json.results[0].id, json.results[0].title, json.results[0].vote_average, json.results[0].release_date, json.results[0].overview, json.results[0].backdrop_path))
 		.catch(err => console.error('error:' + err));
 }
 

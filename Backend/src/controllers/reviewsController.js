@@ -1,9 +1,9 @@
 const reviewsDB = require('../DB/reviewsDB');
+const data = require("../index")
 
 async function getReviews(req, res) {
-	const { name, email } = req.body;
 	try {
-		const result = await reviewsDB.findReviews(name, email);
+		const result = await reviewsDB.findReviews();
 		res.json(result);
 	} catch (error) {
 		console.log(error);
@@ -12,9 +12,9 @@ async function getReviews(req, res) {
 }
 
 async function getReviewById(req, res) {
-	const { name, email } = req.body;
+	const id = req.params;
 	try {
-		const result = await reviewsDB.findReviewById(name, email);
+		const result = await reviewsDB.findReviewById(id);
 		res.json(result);
 	} catch (error) {
 		console.log(error);
@@ -23,9 +23,12 @@ async function getReviewById(req, res) {
 }
 
 async function postReview(req, res) {
-	const { name, email } = req.body;
+    const {idTMDB, idUser } = req.params;
+    console.log(idTMDB);
+    console.log(idUser);
+	const { review, score, watched, planToWatch } = req.body;
 	try {
-		const result = await reviewsDB.insertReview(name, email);
+		const result = await reviewsDB.insertReview(idTMDB, idUser, review, score, watched, planToWatch);
 		res.json(result);
 	} catch (error) {
 		console.log(error);
