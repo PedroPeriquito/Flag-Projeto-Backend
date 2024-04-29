@@ -36,8 +36,39 @@ async function postReview(req, res) {
 	}
 }
 
+async function putReview(req, res) {
+	const { id } = req.params;
+	const {review, score, watched, planToWatch } = req.body;
+	try {
+		await reviewsDB.updateReview(id, review, score, watched, planToWatch);
+		const result = await reviewsDB.findReviewById(id);
+		if (!result) {
+			res.status(404).end();
+			return;
+		}
+		res.json(result);
+	} catch (error) {
+		res.status(500).send(error.message);
+	}
+}
+
+async function deleteReview(req, res) {
+	const { id } = req.params;
+
+	try {
+		const result = await reviewsDB.removeReview(id);
+		res.json(result);
+	} catch (error) {
+		res.status(500).send(error.message);
+	}
+}
+
+
+
 module.exports = {
 	getReviews,
 	getReviewById,
 	postReview,
+	putReview,
+	deleteReview
 };
