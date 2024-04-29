@@ -1,5 +1,5 @@
 const reviewsDB = require('../DB/reviewsDB');
-const data = require("../index")
+const data = require('../index');
 const validator = require('validator');
 
 async function getReviews(req, res) {
@@ -31,7 +31,7 @@ async function postReview(req, res) {
 	const scoreCheck = score.toString();
 	const watchedCheck = watched.toString();
 	const planToWatchCheck = planToWatch.toString();
-	
+
 	if (!validator.isNumeric(idTMDB)) {
 		res.status(400).json('Invalid Request');
 		return;
@@ -55,8 +55,6 @@ async function postReview(req, res) {
 		res.status(400).json('Invalid Request');
 		return;
 	}
-	 
-
 
 	const data = { idTMDB, idUser, review, score, watched, planToWatch };
 	try {
@@ -71,12 +69,32 @@ async function postReview(req, res) {
 async function putReview(req, res) {
 	const { id } = req.params;
 	const { review, score, watched, planToWatch } = req.body;
-	const data = {review, score, watched, planToWatch };
+	const scoreCheck = score.toString();
+	const watchedCheck = watched.toString();
+	const planToWatchCheck = planToWatch.toString();
+
+	if (!validator.isNumeric(scoreCheck)) {
+		res.status(400).json('Invalid Request');
+		return;
+	}
+	if (score < 0 && score > 10) {
+		res.status(400).json('Invalid Score');
+	}
+	if (!validator.isBoolean(watchedCheck)) {
+		res.status(400).json('Invalid Request');
+		return;
+	}
+	if (!validator.isBoolean(planToWatchCheck)) {
+		res.status(400).json('Invalid Request');
+		return;
+	}
+	const data = { review, score, watched, planToWatch };
 	try {
 		await reviewsDB.updateReview(id, data);
 		const result = await reviewsDB.findReviewById(id);
 		if (!result) {
-			res.status(404).end();z
+			res.status(404).end();
+			z;
 			return;
 		}
 		res.json(result);
@@ -96,12 +114,10 @@ async function deleteReview(req, res) {
 	}
 }
 
-
-
 module.exports = {
 	getReviews,
 	getReviewById,
 	postReview,
 	putReview,
-	deleteReview
+	deleteReview,
 };
