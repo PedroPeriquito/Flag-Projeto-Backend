@@ -1,8 +1,10 @@
 const reviewsDB = require('../DB/reviewsDB');
 const data = require("../index")
+const validator = require('validator');
 
 async function getReviews(req, res) {
 	try {
+		console.log(req.oidc.user);
 		const result = await reviewsDB.findReviews();
 		res.json(result);
 	} catch (error) {
@@ -23,12 +25,42 @@ async function getReviewById(req, res) {
 }
 
 async function postReview(req, res) {
-    const {idTMDB, idUser } = req.params;
-    console.log(idTMDB);
-    console.log(idUser);
+	const { idTMDB, idUser } = req.params;
+	//const { idUser } =  req.oidc.user.sid;
 	const { review, score, watched, planToWatch } = req.body;
+	const scoreCheck = score.toString();
+	const watchedCheck = watched.toString();
+	const planToWatchCheck = planToWatch.toString();
+	
+	if (!validator.isNumeric(idTMDB)) {
+		res.status(400).json('Invalid Request');
+		return;
+	}
+	if (validator.isEmpty(idUser)) {
+		res.status(400).json('Invalid Payload');
+		return;
+	}
+	if (!validator.isNumeric(scoreCheck)) {
+		res.status(400).json('Invalid Request');
+		return;
+	}
+	if (score < 0 && score > 10) {
+		res.status(400).json('Invalid Score');
+	}
+	if (!validator.isBoolean(watchedCheck)) {
+		res.status(400).json('Invalid Request');
+		return;
+	}
+	if (!validator.isBoolean(planToWatchCheck)) {
+		res.status(400).json('Invalid Request');
+		return;
+	}
+	 
+
+
+	const data = { idTMDB, idUser, review, score, watched, planToWatch };
 	try {
-		const result = await reviewsDB.insertReview(idTMDB, idUser, review, score, watched, planToWatch);
+		const result = await reviewsDB.insertReview(data);
 		res.json(result);
 	} catch (error) {
 		console.log(error);
@@ -38,12 +70,13 @@ async function postReview(req, res) {
 
 async function putReview(req, res) {
 	const { id } = req.params;
-	const {review, score, watched, planToWatch } = req.body;
+	const { review, score, watched, planToWatch } = req.body;
+	const data = {review, score, watched, planToWatch };
 	try {
-		await reviewsDB.updateReview(id, review, score, watched, planToWatch);
+		await reviewsDB.updateReview(id, data);
 		const result = await reviewsDB.findReviewById(id);
 		if (!result) {
-			res.status(404).end();
+			res.status(404).end();z
 			return;
 		}
 		res.json(result);

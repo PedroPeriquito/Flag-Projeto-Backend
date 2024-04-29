@@ -1,11 +1,11 @@
 const connect = require('./connect');
 const { ObjectId } = require('mongodb');
 
+const db = connect.db('projeto_backend');
+const reviews = db.collection('reviews');
+
 async function findReviews() {
 	try {
-		const db = connect.db('projeto_backend');
-		const reviews = db.collection('reviews');
-
 		const cursor = await reviews.find().toArray();
 
 		return cursor;
@@ -20,8 +20,7 @@ async function findReviewById(id = '') {
 		_id: new ObjectId(id),
 	};
 	try {
-		const db = connect.db('projeto_backend');
-		const reviews = db.collection('reviews');
+		
 
 		const cursor = await reviews.find(query);
 
@@ -32,13 +31,12 @@ async function findReviewById(id = '') {
 	}
 }
 
-async function insertReview(idTMDB, idUser, review, score, watched, planToWatch) {
-	const query = { idTMDB, idUser, review, score, watched, planToWatch };
+async function insertReview(data) {
+/* 	const query = { idTMDB, idUser, review, score, watched, planToWatch }; */
 	try {
-		const db = connect.db('projeto_backend');
-		const reviews = db.collection('reviews');
+		
 
-		const cursor = await reviews.insertOne(query);
+		const cursor = await reviews.insertOne(data);
 
 		return cursor;
 	} catch (error) {
@@ -47,18 +45,13 @@ async function insertReview(idTMDB, idUser, review, score, watched, planToWatch)
 	}
 }
 
-async function updateReview(id = '', text, isPinned) {
+async function updateReview(id = '', data) {
 	const query = {
 		_id: new ObjectId(id),
 	};
 
 	const payload = {
-		$set: {
-			review,
-			score,
-			watched,
-			planToWatch,
-		},
+		$set: data
 	};
 
 	try {

@@ -5,7 +5,7 @@ router.get('/', reviewsController.getReviews);
 router.get('/:id', reviewsController.getReviewById);
 router.post('/:idTMDB/:idUser', reviewsController.postReview);
 router.put('/:id', reviewsController.putReview);
-router.delete('/id', reviewsController.deleteReview);
+router.delete('/:id', reviewsController.deleteReview);
 
 
 module.exports = router;
