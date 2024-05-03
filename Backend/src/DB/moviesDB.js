@@ -1,13 +1,12 @@
 const connect = require('./connect');
+const { ObjectId } = require('mongodb');
 
+const db = connect.db('projeto_backend');
+const movies = db.collection('movies');
 
-async function insertMovie(title, genres, release_date, plot, score) {
-	const query = { title, genres, release_date, plot, score };
+async function findMovies() {
 	try {
-		const db = connect.db('projeto_backend');
-		const movies = db.collection('movies');
-
-		const cursor = await movies.insertOne(query);
+		const cursor = await movies.find().toArray();
 
 		return cursor;
 	} catch (error) {
@@ -16,6 +15,71 @@ async function insertMovie(title, genres, release_date, plot, score) {
 	}
 }
 
+async function findMovieById(id = '') {
+	const query = {
+		_id: new ObjectId(id),
+	};
+	try {
+		const cursor = await movies.find(query);
+
+		return cursor;
+	} catch (error) {
+		console.log(error);
+		throw new Error('Database error');
+	}
+}
+
+
+async function insertMovie(data) {
+
+	try {
+		const cursor = await movies.insertOne(data);
+
+		return cursor;
+	} catch (error) {
+		console.log(error);
+		throw new Error('Database error');
+	}
+}
+
+
+async function updateMovie(id = '', data) {
+	const query = {
+		_id: new ObjectId(id),
+	};
+
+	const payload = {
+		$set: data,
+	};
+
+	try {
+		await movies.updateOne(query, payload);
+		const updatedMovie = await findMovieById(query._id);
+		return updatedMovie;
+	} catch (error) {
+		console.log(error);
+		throw new Error('Database error');
+	}
+}
+
+async function removeMovie(id = '') {
+	const query = {
+		_id: new ObjectId(id),
+	};
+
+	try {
+		const result = await movies.deleteOne(query);
+		return result;
+	} catch (error) {
+		console.log(error);
+		throw new Error('Database error');
+	}
+}
+
 module.exports = {
+	findMovies,
+	findMovieById,
 	insertMovie,
+	updateMovie,
+	removeMovie
 };

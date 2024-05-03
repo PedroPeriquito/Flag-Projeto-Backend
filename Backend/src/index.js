@@ -26,11 +26,11 @@ app.get('/profile', requiresAuth(), (req, res) => {
 	res.send(JSON.stringify(req.oidc.user));
 });
 
-app.get('/TMDB', requiresAuth(), async (req, res) => {
+app.get('/TMDB', async (req, res) => {
 	const tmdbDATA = await TMDB.getTMDB();
 	res.send(tmdbDATA);
 });
-app.get('/search', requiresAuth(), async (req, res) => {
+app.get('/search', async (req, res) => {
 	const tmdbDATA = await TMDB.searchTMDB();
 	res.send(tmdbDATA);
 });

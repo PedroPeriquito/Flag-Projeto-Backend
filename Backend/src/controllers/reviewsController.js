@@ -1,10 +1,8 @@
 const reviewsDB = require('../DB/reviewsDB');
-const data = require('../index');
 const validator = require('validator');
 
 async function getReviews(req, res) {
 	try {
-		console.log(req.oidc.user);
 		const result = await reviewsDB.findReviews();
 		res.json(result);
 	} catch (error) {
@@ -26,12 +24,10 @@ async function getReviewById(req, res) {
 
 async function postReview(req, res) {
 	const { idTMDB, idUser } = req.params;
-	//const { idUser } =  req.oidc.user.sid;
+	// const { idUser } =  req.oidc.user.sid;
 	const { review, score, watched, planToWatch } = req.body;
 	const scoreCheck = score.toString();
-	const watchedCheck = watched.toString();
-	const planToWatchCheck = planToWatch.toString();
-
+	
 	if (!validator.isNumeric(idTMDB)) {
 		res.status(400).json('Invalid Request');
 		return;
@@ -44,18 +40,25 @@ async function postReview(req, res) {
 		res.status(400).json('Invalid Request');
 		return;
 	}
-	if (score < 0 && score > 10) {
+	if (score < 0 || score > 10) {
 		res.status(400).json('Invalid Score');
+		return;
 	}
-	if (!validator.isBoolean(watchedCheck)) {
+	if (typeof watched !== 'boolean') {
 		res.status(400).json('Invalid Request');
 		return;
 	}
-	if (!validator.isBoolean(planToWatchCheck)) {
+	if (typeof planToWatch !== 'boolean') {
+		res.status(400).json('Invalid Request');
+		return;
+	}
+	if(watched === true && planToWatch === true){
 		res.status(400).json('Invalid Request');
 		return;
 	}
 
+
+	
 	const data = { idTMDB, idUser, review, score, watched, planToWatch };
 	try {
 		const result = await reviewsDB.insertReview(data);
@@ -70,24 +73,28 @@ async function putReview(req, res) {
 	const { id } = req.params;
 	const { review, score, watched, planToWatch } = req.body;
 	const scoreCheck = score.toString();
-	const watchedCheck = watched.toString();
-	const planToWatchCheck = planToWatch.toString();
+
 
 	if (!validator.isNumeric(scoreCheck)) {
 		res.status(400).json('Invalid Request');
 		return;
 	}
-	if (score < 0 && score > 10) {
+	if (score < 0 || score > 10) {
 		res.status(400).json('Invalid Score');
 	}
-	if (!validator.isBoolean(watchedCheck)) {
+	if (typeof watched !== 'boolean') {
 		res.status(400).json('Invalid Request');
 		return;
 	}
-	if (!validator.isBoolean(planToWatchCheck)) {
+	if (typeof planToWatch !== 'boolean') {
 		res.status(400).json('Invalid Request');
 		return;
 	}
+	if (watched === true && planToWatch === true) {
+		res.status(400).json('Invalid Request');
+		return;
+	}
+
 	const data = { review, score, watched, planToWatch };
 	try {
 		await reviewsDB.updateReview(id, data);

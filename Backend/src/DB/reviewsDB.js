@@ -32,10 +32,7 @@ async function findReviewById(id = '') {
 }
 
 async function insertReview(data) {
-/* 	const query = { idTMDB, idUser, review, score, watched, planToWatch }; */
 	try {
-		
-
 		const cursor = await reviews.insertOne(data);
 
 		return cursor;
@@ -55,9 +52,9 @@ async function updateReview(id = '', data) {
 	};
 
 	try {
-		const result = await reviews.updateOne(query, payload);
-		const updatedNote = await findReviewById(query._id);
-		return updatedNote;
+		await reviews.updateOne(query, payload);
+		const updatedReview = await findReviewById(query._id);
+		return updatedReview;
 	} catch (error) {
 		console.log(error);
 		throw new Error('Database error');
