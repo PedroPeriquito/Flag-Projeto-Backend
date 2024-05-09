@@ -29,6 +29,17 @@ async function findUserById(id = '') {
 	}
 }
 
+async function selectUser(email) {
+	try {
+		const cursor = await users.find(email);
+
+		return cursor;
+	} catch (error) {
+		console.log(error);
+		throw new Error('Database error');
+	}
+}
+
 async function insertUser(data) {
 	try {
 		const cursor = await users.insertOne(data);
@@ -39,6 +50,26 @@ async function insertUser(data) {
 		throw new Error('Database error');
 	}
 }
+
+async function updateUserPassword(id = '', hash) {
+	const query = {
+		_id: new ObjectId(id),
+	};
+	const payload = {
+		$set: hash,
+	};
+
+	try {
+		await users.updateOne(query, payload);
+		const updatedPassword = await findUserById(query._id);
+		return updatedPassword;
+	} catch (error) {
+		console.log(error);
+		throw new Error('Database error');
+	}
+}
+
+
 
 async function updateUser(id = '', data) {
 	const query = {
@@ -76,7 +107,10 @@ async function removeUser(id = '') {
 module.exports = {
 	findUsers,
 	findUserById,
+	selectUser,
 	insertUser,
+	updateUserPassword,
 	updateUser,
 	removeUser,
 };
+

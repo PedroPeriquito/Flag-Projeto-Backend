@@ -4,14 +4,15 @@ function getTMDB() {
 		method: 'GET',
 		headers: {
 			accept: 'application/json',
-			Authorization: 'Bearer ' + process.env.TMDB_AUTH_TOKKEN,
+			Authorization: 'Bearer ' + process.env.TMDB_AUTH_TOKEN,
+			
 		},
 	};
 
 		fetch(url, options)
-		.then(res => res.json())
-		.then(json => console.log(json.results[0].id, json.results[0].title, json.results[0].vote_average, json.results[0].release_date, json.results[0].overview, json.results[0].backdrop_path))
-		.catch(err => console.error('error:' + err));
+			.then(res => res.json())
+			.then(json => console.log(json.results[0], json.results[1]))
+			.catch(err => console.error('error:' + err));
 }
 
 function searchTMDB() {
@@ -21,7 +22,7 @@ function searchTMDB() {
 		method: 'GET',
 		headers: {
 			accept: 'application/json',
-			Authorization: 'Bearer ' + process.env.TMDB_AUTH_TOKKEN,
+			Authorization: 'Bearer ' + process.env.TMDB_AUTH_TOKEN,
 		},
 	};
 

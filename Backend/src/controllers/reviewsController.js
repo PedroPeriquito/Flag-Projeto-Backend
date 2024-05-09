@@ -23,12 +23,11 @@ async function getReviewById(req, res) {
 }
 
 async function postReview(req, res) {
-	const { idTMDB, idUser } = req.params;
-	// const { idUser } =  req.oidc.user.sid;
+	const { idMovie, idUser } = req.params;
 	const { review, score, watched, planToWatch } = req.body;
 	const scoreCheck = score.toString();
 	
-	if (!validator.isNumeric(idTMDB)) {
+	if (!validator.isEmpty(idMovie)) {
 		res.status(400).json('Invalid Request');
 		return;
 	}
@@ -59,7 +58,7 @@ async function postReview(req, res) {
 
 
 	
-	const data = { idTMDB, idUser, review, score, watched, planToWatch };
+	const data = { idMovie, idUser, review, score, watched, planToWatch };
 	try {
 		const result = await reviewsDB.insertReview(data);
 		res.json(result);
