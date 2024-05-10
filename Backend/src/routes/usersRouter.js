@@ -7,7 +7,7 @@ router.get('/', usersController.getUsers);
 router.get('/:id', usersController.getUserById);
 router.post('/', usersController.postUser);
 router.put('/:id', usersController.putUser);
-router.put('/ChangePassword/:id', authController.changePassword);
+router.put('/changePassword/:id', authController.changePassword);
 router.delete('/:id', usersController.deleteUser);
 
 

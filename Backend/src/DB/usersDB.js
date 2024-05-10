@@ -20,7 +20,7 @@ async function findUserById(id = '') {
 		_id: new ObjectId(id),
 	};
 	try {
-		const cursor = await users.find(query);
+		const cursor = await users.findOne(query);
 
 		return cursor;
 	} catch (error) {
@@ -31,8 +31,7 @@ async function findUserById(id = '') {
 
 async function selectUser(email) {
 	try {
-		const cursor = await users.find(email);
-
+		const cursor = await users.findOne({email});
 		return cursor;
 	} catch (error) {
 		console.log(error);
@@ -56,7 +55,7 @@ async function updateUserPassword(id = '', hash) {
 		_id: new ObjectId(id),
 	};
 	const payload = {
-		$set: hash,
+		$set: { hash }
 	};
 
 	try {

@@ -22,7 +22,7 @@ async function findReviewById(id = '') {
 	try {
 		
 
-		const cursor = await reviews.find(query);
+		const cursor = await reviews.findOne(query);
 
 		return cursor;
 	} catch (error) {

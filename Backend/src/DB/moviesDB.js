@@ -20,7 +20,7 @@ async function findMovieById(id = '') {
 		_id: new ObjectId(id),
 	};
 	try {
-		const cursor = await movies.find(query);
+		const cursor = await movies.findOne(query);
 
 		return cursor;
 	} catch (error) {
