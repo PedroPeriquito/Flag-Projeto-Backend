@@ -20,8 +20,19 @@ async function findReviewById(id = '') {
 		_id: new ObjectId(id),
 	};
 	try {
-		
+		const cursor = await reviews.findOne(query);
 
+		return cursor;
+	} catch (error) {
+		console.log(error);
+		throw new Error('Database error');
+	}
+}
+async function findReviewByMovieId(idMovie = '') {
+	const query = {
+		idMovie: new ObjectId(idMovie),
+	};
+	try {
 		const cursor = await reviews.findOne(query);
 
 		return cursor;
@@ -31,9 +42,18 @@ async function findReviewById(id = '') {
 	}
 }
 
-async function insertReview(data) {
+
+
+
+async function insertReview(idMovie, idUser, data) {
+	const query = {
+		idMovie: new ObjectId(idMovie),
+		idUser: new ObjectId(idUser),
+		...data
+	};
+
 	try {
-		const cursor = await reviews.insertOne(data);
+		const cursor = await reviews.insertOne(query);
 
 		return cursor;
 	} catch (error) {
@@ -48,7 +68,7 @@ async function updateReview(id = '', data) {
 	};
 
 	const payload = {
-		$set: data
+		$set: data,
 	};
 
 	try {
@@ -78,7 +98,8 @@ async function removeReview(id = '') {
 module.exports = {
 	findReviews,
 	findReviewById,
+	findReviewByMovieId,
 	insertReview,
 	updateReview,
-	removeReview
+	removeReview,
 };

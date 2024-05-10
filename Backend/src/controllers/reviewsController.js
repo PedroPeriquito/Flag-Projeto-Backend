@@ -21,13 +21,25 @@ async function getReviewById(req, res) {
 		res.status(500).send(error.message);
 	}
 }
+async function getReviewByMovieId(req, res) {
+	const idMovie = req.params;
+	try {
+		const result = await reviewsDB.findReviewById(idMovie);
+		res.json(result);
+	} catch (error) {
+		console.log(error);
+		res.status(500).send(error.message);
+	}
+}
+
+
 
 async function postReview(req, res) {
 	const { idMovie, idUser } = req.params;
 	const { review, score, watched, planToWatch } = req.body;
 	const scoreCheck = score.toString();
 	
-	if (!validator.isEmpty(idMovie)) {
+	if (validator.isEmpty(idMovie)) {
 		res.status(400).json('Invalid Request');
 		return;
 	}
@@ -58,9 +70,9 @@ async function postReview(req, res) {
 
 
 	
-	const data = { idMovie, idUser, review, score, watched, planToWatch };
+	const data = { review, score, watched, planToWatch };
 	try {
-		const result = await reviewsDB.insertReview(data);
+		const result = await reviewsDB.insertReview(idMovie, idUser, data);
 		res.json(result);
 	} catch (error) {
 		console.log(error);
@@ -123,6 +135,7 @@ async function deleteReview(req, res) {
 module.exports = {
 	getReviews,
 	getReviewById,
+	getReviewByMovieId,
 	postReview,
 	putReview,
 	deleteReview,

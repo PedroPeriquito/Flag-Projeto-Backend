@@ -3,6 +3,7 @@ const reviewsController = require('../controllers/reviewsController');
 
 router.get('/', reviewsController.getReviews);
 router.get('/:id', reviewsController.getReviewById);
+router.get('/:idMovie', reviewsController.getReviewByMovieId);
 router.post('/:idMovie/:idUser', reviewsController.postReview);
 router.put('/:id', reviewsController.putReview);
 router.delete('/:id', reviewsController.deleteReview);

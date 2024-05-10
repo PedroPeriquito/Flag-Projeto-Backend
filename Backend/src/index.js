@@ -3,7 +3,7 @@ const express = require('express');
 const usersRouter = require('./routes/usersRouter');
 const moviesRouter = require('./routes/moviesRouter');
 const reviewsRouter = require('./routes/reviewsRouter');
-const authController = require('./controllers/authController');
+const authRouter = require('./routes/authRouter');
 const cors = require('cors');
 const TMDB = require('./DB/TMDB');
 
@@ -21,11 +21,11 @@ app.use(cors(corsOptions));
 app.use('/users', usersRouter);
 app.use('/movies', moviesRouter);
 app.use('/reviews', reviewsRouter);
+app.use('/', authRouter);
 
 app.get('/', (req, res) => {
 });
-app.post('/register', authController.registerUser);
-app.post('/login', authController.loginUser);
+
 
 app.get('/TMDB', async (req, res) => {
 	const tmdbDATA = await TMDB.getTMDB();
