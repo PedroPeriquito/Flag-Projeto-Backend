@@ -12,9 +12,9 @@ async function getMovies(req, res) {
 }
 
 async function getMovieById(req, res) {
-	const id = req.params;
+	const idTMDB = req.params;
 	try {
-		const result = await moviesDB.findMovieById(id);
+		const result = await moviesDB.findMovieById(idTMDB);
 		res.json(result);
 	} catch (error) {
 		console.log(error);
@@ -23,7 +23,48 @@ async function getMovieById(req, res) {
 }
 
 async function postMovie(req, res) {
-	const { idTMDB, title, genres, img, release_date, plot, score } = req.body;
+	const { idTMDB, title, img, release_date, plot, score } = req.body;
+	/* 	const scoreCheck = score.toString();
+	const idTMDBCheck = idTMDB.toString();
+
+ 	if (!validator.isNumeric(idTMDBCheck)) {
+		res.status(400).json('Invalid Payload');
+		return;
+	}
+	if (validator.isEmpty(title)) {
+		res.status(400).json('Invalid Payload');
+		return;
+	}
+	if (!validator.isDate(release_date)) {
+		res.status(400).json('Invalid Payload');
+		return;
+	}
+	if (validator.isEmpty(plot)) {
+		res.status(400).json('Invalid Payload');
+		return;
+	}
+	if (!validator.isNumeric(scoreCheck)) {
+		res.status(400).json('Invalid Payload');
+		return;
+	}
+	if (score < 0 || score > 10) {
+		res.status(400).json('Invalid Score');
+		return;
+	} */
+
+	const data = { idTMDB, title, img, release_date, plot, score };
+	try {
+		const result = await moviesDB.insertMovie(data);
+		res.json(result);
+	} catch (error) {
+		console.log(error);
+		res.status(500).send(error.message);
+	}
+}
+
+async function putMovie(req, res) {
+	const { id } = req.params;
+	const { idTMDB, title, img, release_date, plot, score } = req.body;
 	const scoreCheck = score.toString();
 	const idTMDBCheck = idTMDB.toString();
 
@@ -32,10 +73,6 @@ async function postMovie(req, res) {
 		return;
 	}
 	if (validator.isEmpty(title)) {
-		res.status(400).json('Invalid Payload');
-		return;
-	}
-	if (validator.isEmpty(genres)) {
 		res.status(400).json('Invalid Payload');
 		return;
 	}
@@ -56,53 +93,7 @@ async function postMovie(req, res) {
 		return;
 	}
 
-	const data = {idTMDB, title, genres, img, release_date, plot, score };
-	try {
-		const result = await moviesDB.insertMovie(data);
-		res.json(result);
-	} catch (error) {
-		console.log(error);
-		res.status(500).send(error.message);
-	}
-}
-
-
-async function putMovie(req, res) {
-	const { id } = req.params;
-	const { idTMDB, title, genres, img, release_date, plot, score } = req.body;
-	const scoreCheck = score.toString();
-	const idTMDBCheck = idTMDB.toString();
-
-		if (!validator.isNumeric(idTMDBCheck)) {
-			res.status(400).json('Invalid Payload');
-			return;
-		}
-		if (validator.isEmpty(title)) {
-			res.status(400).json('Invalid Payload');
-			return;
-		}
-		if (validator.isEmpty(genres)) {
-			res.status(400).json('Invalid Payload');
-			return;
-		}
-		if (!validator.isDate(release_date)) {
-			res.status(400).json('Invalid Payload');
-			return;
-		}
-		if (validator.isEmpty(plot)) {
-			res.status(400).json('Invalid Payload');
-			return;
-		}
-		if (!validator.isNumeric(scoreCheck)) {
-			res.status(400).json('Invalid Payload');
-			return;
-		}
-		if (score < 0 || score > 10) {
-			res.status(400).json('Invalid Score');
-			return;
-		}
-
-		const data = { idTMDB, title, genres, img, release_date, plot, score };
+	const data = { idTMDB, title, img, release_date, plot, score };
 	try {
 		await moviesDB.updateMovie(id, data);
 		const result = await moviesDB.findMovieById(id);

@@ -39,7 +39,7 @@ async function postReview(req, res) {
 	const { review, score, watched, planToWatch } = req.body;
 	const scoreCheck = score.toString();
 	
-	if (validator.isEmpty(idMovie)) {
+	if (!validator.isNumeric(idMovie)) {
 		res.status(400).json('Invalid Request');
 		return;
 	}
@@ -70,9 +70,9 @@ async function postReview(req, res) {
 
 
 	
-	const data = { review, score, watched, planToWatch };
+	const data = { idMovie, review, score, watched, planToWatch };
 	try {
-		const result = await reviewsDB.insertReview(idMovie, idUser, data);
+		const result = await reviewsDB.insertReview(idUser, data);
 		res.json(result);
 	} catch (error) {
 		console.log(error);

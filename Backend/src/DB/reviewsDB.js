@@ -33,7 +33,7 @@ async function findReviewByMovieId(idMovie = '') {
 		idMovie: new ObjectId(idMovie),
 	};
 	try {
-		const cursor = await reviews.findOne(query);
+		const cursor = await reviews.find(query).toArray();
 
 		return cursor;
 	} catch (error) {
@@ -45,9 +45,8 @@ async function findReviewByMovieId(idMovie = '') {
 
 
 
-async function insertReview(idMovie, idUser, data) {
+async function insertReview(idUser, data) {
 	const query = {
-		idMovie: new ObjectId(idMovie),
 		idUser: new ObjectId(idUser),
 		...data
 	};

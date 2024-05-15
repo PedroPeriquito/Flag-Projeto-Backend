@@ -5,7 +5,7 @@ const moviesRouter = require('./routes/moviesRouter');
 const reviewsRouter = require('./routes/reviewsRouter');
 const authRouter = require('./routes/authRouter');
 const cors = require('cors');
-const TMDB = require('./DB/TMDB');
+
 
 
 
@@ -24,16 +24,6 @@ app.use('/reviews', reviewsRouter);
 app.use('/', authRouter);
 
 app.get('/', (req, res) => {
-});
-
-
-app.get('/TMDB', async (req, res) => {
-	const tmdbDATA = await TMDB.getTMDB();
-	res.send(tmdbDATA);
-});
-app.get('/search', async (req, res) => {
-	const tmdbDATA = await TMDB.searchTMDB();
-	res.send(tmdbDATA);
 });
 
 app.listen(port, function () {

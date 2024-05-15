@@ -15,13 +15,11 @@ async function findMovies() {
 	}
 }
 
-async function findMovieById(id = '') {
-	const query = {
-		_id: new ObjectId(id),
-	};
+async function findMovieById(idTMDB) {
+	let query = Number(idTMDB);
 	try {
-		const cursor = await movies.findOne(query);
-
+		const cursor = await movies.findOne({ query });
+		console.log(idTMDB);
 		return cursor;
 	} catch (error) {
 		console.log(error);
@@ -29,9 +27,7 @@ async function findMovieById(id = '') {
 	}
 }
 
-
 async function insertMovie(data) {
-
 	try {
 		const cursor = await movies.insertOne(data);
 
@@ -41,7 +37,6 @@ async function insertMovie(data) {
 		throw new Error('Database error');
 	}
 }
-
 
 async function updateMovie(id = '', data) {
 	const query = {
@@ -81,5 +76,5 @@ module.exports = {
 	findMovieById,
 	insertMovie,
 	updateMovie,
-	removeMovie
+	removeMovie,
 };

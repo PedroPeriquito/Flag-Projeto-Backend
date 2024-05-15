@@ -57,16 +57,28 @@ async function loginUser(req, res) {
 		return;
 	}
 
-	
 	const token = jwtService.createToken(user._id, user.email);
-			res.json({
-				status: 'ok',
-				message: 'User logged in',
-				token,
-			});
+	res.json({
+		status: 'ok',
+		message: 'User logged in',
+		token,
+		userId:user._id
+	});
 }
 
 async function changePassword(req, res) {
+	const { authorization } = req.headers;
+	const token = authorization.split(' ')[1];
+	console.log(token);
+
+	const result = jwtService.verifyToken(token);
+	if (!result) {
+		res.status(400).json({
+			status: 'error',
+			message: 'Invalid token',
+		});
+		return;
+	}
 	const { id } = req.params;
 	const { password, newPassword, verifyPassword } = req.body;
 	if (!validator.isStrongPassword(newPassword)) {
@@ -87,9 +99,9 @@ async function changePassword(req, res) {
 		return;
 	}
 
-	const result = await encryptionService.verifyHash(user.hash, password);
+	const pass = await encryptionService.verifyHash(user.hash, password);
 	console.log(user);
-	if (result !== true) {
+	if (pass !== true) {
 		res.status(400).json({
 			status: 'Fail',
 			message: 'wrong password',
@@ -100,11 +112,11 @@ async function changePassword(req, res) {
 	const hash = await encryptionService.createHash(newPassword);
 	const userPass = await userDB.updateUserPassword(id, hash);
 
-		if (userPass === -1) {
-			res.status(400).json({
-				message: 'Error changing password',
-			});
-			return;
+	if (userPass === -1) {
+		res.status(400).json({
+			message: 'Error changing password',
+		});
+		return;
 	}
 	res.json({
 		status: 'success',
