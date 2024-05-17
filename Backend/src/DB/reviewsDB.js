@@ -28,12 +28,9 @@ async function findReviewById(id = '') {
 		throw new Error('Database error');
 	}
 }
-async function findReviewByMovieId(idMovie = '') {
-	const query = {
-		idMovie: new ObjectId(idMovie),
-	};
+async function findReviewByMovieId(idTMDB) {
 	try {
-		const cursor = await reviews.find(query).toArray();
+		const cursor = await reviews.find({ idTMDB }).toArray();
 
 		return cursor;
 	} catch (error) {
@@ -42,13 +39,10 @@ async function findReviewByMovieId(idMovie = '') {
 	}
 }
 
-
-
-
 async function insertReview(idUser, data) {
 	const query = {
 		idUser: new ObjectId(idUser),
-		...data
+		...data,
 	};
 
 	try {

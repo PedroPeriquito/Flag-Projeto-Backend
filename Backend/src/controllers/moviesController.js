@@ -12,7 +12,7 @@ async function getMovies(req, res) {
 }
 
 async function getMovieById(req, res) {
-	const idTMDB = req.params;
+	const idTMDB = req.params.idTMDB;
 	try {
 		const result = await moviesDB.findMovieById(idTMDB);
 		res.json(result);
@@ -24,10 +24,9 @@ async function getMovieById(req, res) {
 
 async function postMovie(req, res) {
 	const { idTMDB, title, img, release_date, plot, score } = req.body;
-	/* 	const scoreCheck = score.toString();
-	const idTMDBCheck = idTMDB.toString();
+	const scoreCheck = score.toString();
 
- 	if (!validator.isNumeric(idTMDBCheck)) {
+	if (!validator.isNumeric(idTMDB)) {
 		res.status(400).json('Invalid Payload');
 		return;
 	}
@@ -50,7 +49,7 @@ async function postMovie(req, res) {
 	if (score < 0 || score > 10) {
 		res.status(400).json('Invalid Score');
 		return;
-	} */
+	}
 
 	const data = { idTMDB, title, img, release_date, plot, score };
 	try {
@@ -66,9 +65,8 @@ async function putMovie(req, res) {
 	const { id } = req.params;
 	const { idTMDB, title, img, release_date, plot, score } = req.body;
 	const scoreCheck = score.toString();
-	const idTMDBCheck = idTMDB.toString();
 
-	if (!validator.isNumeric(idTMDBCheck)) {
+	if (!validator.isNumeric(idTMDB)) {
 		res.status(400).json('Invalid Payload');
 		return;
 	}

@@ -16,10 +16,10 @@ async function findMovies() {
 }
 
 async function findMovieById(idTMDB) {
-	let query = Number(idTMDB);
+	console.log(idTMDB);
+
 	try {
-		const cursor = await movies.findOne({ query });
-		console.log(idTMDB);
+		const cursor = await movies.findOne({ idTMDB });
 		return cursor;
 	} catch (error) {
 		console.log(error);

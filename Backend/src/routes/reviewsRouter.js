@@ -3,10 +3,9 @@ const reviewsController = require('../controllers/reviewsController');
 
 router.get('/', reviewsController.getReviews);
 router.get('/:id', reviewsController.getReviewById);
-router.get('/movie/:idMovie', reviewsController.getReviewByMovieId);
-router.post('/:idTMDB/:idUser', reviewsController.postReview);
+router.get('/movie/:idTMDB', reviewsController.getReviewByMovieId);
+router.post('/:idTMDBNum/:idUser', reviewsController.postReview);
 router.put('/:id', reviewsController.putReview);
 router.delete('/:id', reviewsController.deleteReview);
-
 
 module.exports = router;

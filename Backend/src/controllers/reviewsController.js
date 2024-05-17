@@ -22,9 +22,9 @@ async function getReviewById(req, res) {
 	}
 }
 async function getReviewByMovieId(req, res) {
-	const idMovie = req.params;
+	const idTMDB = req.params.idTMDB;
 	try {
-		const result = await reviewsDB.findReviewById(idMovie);
+		const result = await reviewsDB.findReviewByMovieId(idTMDB);
 		res.json(result);
 	} catch (error) {
 		console.log(error);
@@ -32,14 +32,13 @@ async function getReviewByMovieId(req, res) {
 	}
 }
 
-
-
 async function postReview(req, res) {
-	const { idMovie, idUser } = req.params;
+	const { idTMDBNum, idUser } = req.params;
 	const { review, score, watched, planToWatch } = req.body;
 	const scoreCheck = score.toString();
-	
-	if (!validator.isNumeric(idMovie)) {
+	const idTMDB = idTMDBNum.toString();
+
+	if (!validator.isNumeric(idTMDB)) {
 		res.status(400).json('Invalid Request');
 		return;
 	}
@@ -63,14 +62,12 @@ async function postReview(req, res) {
 		res.status(400).json('Invalid Request');
 		return;
 	}
-	if(watched === true && planToWatch === true){
+	if (watched === true && planToWatch === true) {
 		res.status(400).json('Invalid Request');
 		return;
 	}
 
-
-	
-	const data = { idMovie, review, score, watched, planToWatch };
+	const data = { idTMDB, review, score, watched, planToWatch };
 	try {
 		const result = await reviewsDB.insertReview(idUser, data);
 		res.json(result);
@@ -84,7 +81,6 @@ async function putReview(req, res) {
 	const { id } = req.params;
 	const { review, score, watched, planToWatch } = req.body;
 	const scoreCheck = score.toString();
-
 
 	if (!validator.isNumeric(scoreCheck)) {
 		res.status(400).json('Invalid Request');
