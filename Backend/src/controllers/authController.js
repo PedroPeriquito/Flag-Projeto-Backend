@@ -62,14 +62,13 @@ async function loginUser(req, res) {
 		status: 'ok',
 		message: 'User logged in',
 		token,
-		userId:user._id
+		userId: user._id,
 	});
 }
 
 async function changePassword(req, res) {
 	const { authorization } = req.headers;
 	const token = authorization.split(' ')[1];
-	console.log(token);
 
 	const result = jwtService.verifyToken(token);
 	if (!result) {
@@ -100,7 +99,7 @@ async function changePassword(req, res) {
 	}
 
 	const pass = await encryptionService.verifyHash(user.hash, password);
-	console.log(user);
+
 	if (pass !== true) {
 		res.status(400).json({
 			status: 'Fail',

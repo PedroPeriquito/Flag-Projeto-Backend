@@ -21,16 +21,42 @@ async function getReviewById(req, res) {
 		res.status(500).send(error.message);
 	}
 }
+
 async function getReviewByMovieId(req, res) {
 	const idTMDB = req.params.idTMDB;
+	const page = req.query.page || 0;
 	try {
-		const result = await reviewsDB.findReviewByMovieId(idTMDB);
+		const result = await reviewsDB.findReviewByMovieId(page, idTMDB);
 		res.json(result);
 	} catch (error) {
 		console.log(error);
 		res.status(500).send(error.message);
 	}
 }
+async function getReviewByWatched(req, res) {
+	const idUser = req.params.idUser;
+	
+	try {
+		const result = await reviewsDB.findReviewByWatched(idUser);
+		res.json(result);
+	} catch (error) {
+		console.log(error);
+		res.status(500).send(error.message);
+	}
+}
+async function getReviewByPlanToWatch(req, res) {
+	const idUser = req.params.idUser;
+
+	try {
+		const result = await reviewsDB.findReviewByPlanToWatch(idUser);
+		res.json(result);
+	} catch (error) {
+		console.log(error);
+		res.status(500).send(error.message);
+	}
+}
+;
+
 
 async function postReview(req, res) {
 	const { idTMDBNum, idUser } = req.params;
@@ -78,6 +104,10 @@ async function postReview(req, res) {
 }
 
 async function putReview(req, res) {
+	const { authorization } = req.headers;
+	const token = authorization.split(' ')[1];
+
+	const result = jwtService.verifyToken(token);
 	const { id } = req.params;
 	const { review, score, watched, planToWatch } = req.body;
 	const scoreCheck = score.toString();
@@ -132,6 +162,8 @@ module.exports = {
 	getReviews,
 	getReviewById,
 	getReviewByMovieId,
+	getReviewByWatched,
+	getReviewByPlanToWatch,
 	postReview,
 	putReview,
 	deleteReview,

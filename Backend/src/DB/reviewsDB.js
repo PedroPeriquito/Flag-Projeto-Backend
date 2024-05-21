@@ -28,9 +28,94 @@ async function findReviewById(id = '') {
 		throw new Error('Database error');
 	}
 }
-async function findReviewByMovieId(idTMDB) {
+
+async function findReviewByMovieId(page, idTMDB) {
+	const lookup = {
+		$lookup: {
+			from: 'users',
+			localField: 'idUser',
+			foreignField: '_id',
+			as: 'user',
+		},
+	};
+	const project = {
+		$project: {
+			review: 1,
+			score: 1,
+			'user.name': 1,
+		},
+	};
+	const match = { $match: { idTMDB: idTMDB } };
+
+	const commentsPerPage = 1;
 	try {
-		const cursor = await reviews.find({ idTMDB }).toArray();
+		const cursor = await reviews
+			.aggregate([match, lookup, project])
+			.skip(page * commentsPerPage)
+			.limit(commentsPerPage)
+			.toArray();
+		return cursor;
+	} catch (error) {
+		console.log(error);
+		throw new Error('Database error');
+	}
+}
+async function findReviewByWatched(userId = '') {
+	const lookup = {
+		$lookup: {
+			from: 'movies',
+			localField: 'idTMDB',
+			foreignField: 'idTMDB',
+			as: 'movie',
+		},
+	};
+	const project = {
+		$project: {
+			score: 1,
+			'movie.title': 1,
+			'movie.img': 1,
+		},
+	};
+	const match = {
+		$match: {
+			idUser: new ObjectId(userId),
+			watched: true,
+		},
+	};
+
+	try {
+		const cursor = await reviews.aggregate([match, lookup, project]).toArray();
+
+		return cursor;
+	} catch (error) {
+		console.log(error);
+		throw new Error('Database error');
+	}
+}
+async function findReviewByPlanToWatch(userId = '') {
+	const lookup = {
+		$lookup: {
+			from: 'movies',
+			localField: 'idTMDB',
+			foreignField: 'idTMDB',
+			as: 'movie',
+		},
+	};
+	const project = {
+		$project: {
+			'movie.title': 1,
+			'movie.img': 1,
+		},
+	};
+	const match = {
+		$match: {
+			idUser: new ObjectId(userId),
+			planToWatch: true,
+		},
+	};
+
+	try {
+		const cursor = await reviews.aggregate([match, lookup, project]).toArray();
 
 		return cursor;
 	} catch (error) {
@@ -92,6 +177,8 @@ module.exports = {
 	findReviews,
 	findReviewById,
 	findReviewByMovieId,
+	findReviewByWatched,
+	findReviewByPlanToWatch,
 	insertReview,
 	updateReview,
 	removeReview,
