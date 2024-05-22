@@ -12,9 +12,20 @@ async function getReviews(req, res) {
 }
 
 async function getReviewById(req, res) {
-	const id = req.params;
+	const { id } = req.params;
 	try {
 		const result = await reviewsDB.findReviewById(id);
+		res.json(result);
+	} catch (error) {
+		console.log(error);
+		res.status(500).send(error.message);
+	}
+}
+
+async function getReviewByMovieUserId(req, res) {
+	const { idTMDB, idUser } = req.params;
+	try {
+		const result = await reviewsDB.findReviewByMovieUserId(idUser, idTMDB);
 		res.json(result);
 	} catch (error) {
 		console.log(error);
@@ -35,7 +46,7 @@ async function getReviewByMovieId(req, res) {
 }
 async function getReviewByWatched(req, res) {
 	const idUser = req.params.idUser;
-	
+
 	try {
 		const result = await reviewsDB.findReviewByWatched(idUser);
 		res.json(result);
@@ -55,14 +66,15 @@ async function getReviewByPlanToWatch(req, res) {
 		res.status(500).send(error.message);
 	}
 }
-;
-
-
 async function postReview(req, res) {
-	const { idTMDBNum, idUser } = req.params;
-	const { review, score, watched, planToWatch } = req.body;
-	const scoreCheck = score.toString();
-	const idTMDB = idTMDBNum.toString();
+	/* 	const { authorization } = req.headers;
+	const token = authorization.split(' ')[1];
+
+	const result = jwtService.verifyToken(token); */
+
+	const { idTMDB, idUser, review, score, watched, planToWatch } = req.body;
+	/* const scoreCheck = score.toString();
+	
 
 	if (!validator.isNumeric(idTMDB)) {
 		res.status(400).json('Invalid Request');
@@ -91,11 +103,14 @@ async function postReview(req, res) {
 	if (watched === true && planToWatch === true) {
 		res.status(400).json('Invalid Request');
 		return;
-	}
+	} */
 
 	const data = { idTMDB, review, score, watched, planToWatch };
+	console.log(data);
+	console.log(idUser);
 	try {
 		const result = await reviewsDB.insertReview(idUser, data);
+
 		res.json(result);
 	} catch (error) {
 		console.log(error);
@@ -104,13 +119,14 @@ async function postReview(req, res) {
 }
 
 async function putReview(req, res) {
-	const { authorization } = req.headers;
+	/* 	const { authorization } = req.headers;
 	const token = authorization.split(' ')[1];
 
-	const result = jwtService.verifyToken(token);
+	const result = jwtService.verifyToken(token); */
 	const { id } = req.params;
-	const { review, score, watched, planToWatch } = req.body;
-	const scoreCheck = score.toString();
+	const { idTMDB, idUser, review, score, watched, planToWatch } = req.body;
+
+	/* 	const scoreCheck = score.toString();
 
 	if (!validator.isNumeric(scoreCheck)) {
 		res.status(400).json('Invalid Request');
@@ -131,10 +147,11 @@ async function putReview(req, res) {
 		res.status(400).json('Invalid Request');
 		return;
 	}
-
-	const data = { review, score, watched, planToWatch };
+ */
+	const data = { idTMDB, review, score, watched, planToWatch };
+	console.log(data);
 	try {
-		await reviewsDB.updateReview(id, data);
+		await reviewsDB.updateReview(id, idUser, data);
 		const result = await reviewsDB.findReviewById(id);
 		if (!result) {
 			res.status(404).end();
@@ -161,6 +178,7 @@ async function deleteReview(req, res) {
 module.exports = {
 	getReviews,
 	getReviewById,
+	getReviewByMovieUserId,
 	getReviewByMovieId,
 	getReviewByWatched,
 	getReviewByPlanToWatch,
