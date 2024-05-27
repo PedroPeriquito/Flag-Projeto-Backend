@@ -1,5 +1,6 @@
 const reviewsDB = require('../DB/reviewsDB');
 const validator = require('validator');
+const jwtService = require('../services/jwtService');
 
 async function getReviews(req, res) {
 	try {
@@ -67,25 +68,26 @@ async function getReviewByPlanToWatch(req, res) {
 	}
 }
 async function postReview(req, res) {
-	/* 	const { authorization } = req.headers;
+	const { authorization } = req.headers;
 	const token = authorization.split(' ')[1];
 
-	const result = jwtService.verifyToken(token); */
+	const result = jwtService.verifyToken(token);
+		if (!result) {
+		res.status(400).json({
+			status: 'error',
+			message: 'Invalid token',
+		});
+		return;
+	}
 
 	const { idTMDB, idUser, review, score, watched, planToWatch } = req.body;
-	/* const scoreCheck = score.toString();
-	
 
-	if (!validator.isNumeric(idTMDB)) {
-		res.status(400).json('Invalid Request');
+	if (validator.isEmpty(idTMDB)) {
+		res.status(400).json('Invalid Payload');
 		return;
 	}
 	if (validator.isEmpty(idUser)) {
 		res.status(400).json('Invalid Payload');
-		return;
-	}
-	if (!validator.isNumeric(scoreCheck)) {
-		res.status(400).json('Invalid Request');
 		return;
 	}
 	if (score < 0 || score > 10) {
@@ -103,11 +105,10 @@ async function postReview(req, res) {
 	if (watched === true && planToWatch === true) {
 		res.status(400).json('Invalid Request');
 		return;
-	} */
+	}
 
 	const data = { idTMDB, review, score, watched, planToWatch };
-	console.log(data);
-	console.log(idUser);
+
 	try {
 		const result = await reviewsDB.insertReview(idUser, data);
 
@@ -119,17 +120,25 @@ async function postReview(req, res) {
 }
 
 async function putReview(req, res) {
-	/* 	const { authorization } = req.headers;
+	const { authorization } = req.headers;
 	const token = authorization.split(' ')[1];
 
-	const result = jwtService.verifyToken(token); */
+	const result = jwtService.verifyToken(token);
+		if (!result) {
+		res.status(400).json({
+			status: 'error',
+			message: 'Invalid token',
+		});
+		return;
+	}
 	const { id } = req.params;
 	const { idTMDB, idUser, review, score, watched, planToWatch } = req.body;
-
-	/* 	const scoreCheck = score.toString();
-
-	if (!validator.isNumeric(scoreCheck)) {
-		res.status(400).json('Invalid Request');
+	if (validator.isEmpty(idTMDB)) {
+		res.status(400).json('Invalid Payload');
+		return;
+	}
+	if (validator.isEmpty(idUser)) {
+		res.status(400).json('Invalid Payload');
 		return;
 	}
 	if (score < 0 || score > 10) {
@@ -146,8 +155,8 @@ async function putReview(req, res) {
 	if (watched === true && planToWatch === true) {
 		res.status(400).json('Invalid Request');
 		return;
-	}
- */
+	} 
+
 	const data = { idTMDB, review, score, watched, planToWatch };
 	console.log(data);
 	try {
