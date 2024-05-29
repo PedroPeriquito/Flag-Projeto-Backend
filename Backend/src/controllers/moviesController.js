@@ -12,9 +12,20 @@ async function getMovies(req, res) {
 }
 
 async function getMovieById(req, res) {
+	const id = req.params.id;
+	try {
+		const result = await moviesDB.findMovieById(id);
+		res.json(result);
+	} catch (error) {
+		console.log(error);
+		res.status(500).send(error.message);
+	}
+}
+
+async function getMovieByIdTMDB(req, res) {
 	const idTMDB = req.params.idTMDB;
 	try {
-		const result = await moviesDB.findMovieById(idTMDB);
+		const result = await moviesDB.findMovieByIdTMDB(idTMDB);
 		res.json(result);
 	} catch (error) {
 		console.log(error);
@@ -120,6 +131,7 @@ async function deleteMovie(req, res) {
 module.exports = {
 	getMovies,
 	getMovieById,
+	getMovieByIdTMDB,
 	postMovie,
 	putMovie,
 	deleteMovie,
